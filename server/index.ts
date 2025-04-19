@@ -4,7 +4,7 @@ import { loadEnvFile } from 'node:process'
 
 process.env.NODE_ENV !== "production" && loadEnvFile()
 
-const port = process.env.SERVER_PORT ?? 8000
+const port = process.env.PORT ?? 8000
 
 const server = createServer()
 const io = new Server(server, {

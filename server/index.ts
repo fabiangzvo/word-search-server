@@ -1,7 +1,8 @@
 import { Server } from "socket.io";
 import { createServer } from "node:http";
+import { loadEnvFile } from 'node:process'
 
-process.loadEnvFile()
+process.env.NODE_ENV !== "production" && loadEnvFile()
 
 const port = process.env.SERVER_PORT ?? 8000
 

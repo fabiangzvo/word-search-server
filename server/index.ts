@@ -1,11 +1,11 @@
-import express from 'express'
 import { Server } from "socket.io";
 import { createServer } from "node:http";
 
-const port = process.env.PORT ?? 8080
+process.loadEnvFile()
 
-const app = express()
-const server = createServer(app)
+const port = process.env.SERVER_PORT ?? 8000
+
+const server = createServer()
 const io = new Server(server, {
   cors: {
     origin: "*",
@@ -13,17 +13,11 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  socket.on("message", (e) => {
+  socket.on("ping", (e) => {
     console.log(e);
 
-    io.emit("message", "socking dick");
+    io.emit("ping", "socket is working");
   });
 });
 
-
-
-app.get("/",(req, res)=>{
-    res.send("Lo mas fresa del pedazo")
-})
-
-server.listen(port, ()=>console.log("i'm running"))
+server.listen(port, () => console.log(`server is running on port: ${port}`))

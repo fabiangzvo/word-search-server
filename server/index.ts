@@ -15,5 +15,5 @@ new WebSocketServer(server);
 server.listen(port, () => {
     const logger = Logger.getInstance();
 
-    logger.info(`server is running on port: ${port}`, { section: "server" })
+    logger.info(`new server is running on port: ${port}`, { section: "server" })
 });

@@ -1,24 +1,14 @@
-import { Server } from "socket.io";
 import { createServer } from "node:http";
-import { loadEnvFile } from 'node:process'
+import { loadEnvFile } from "node:process";
 
-process.env.NODE_ENV !== "production" && loadEnvFile()
+import { WebSocketServer } from "./sockets";
 
-const port = process.env.PORT ?? 8000
+process.env.NODE_ENV !== "production" && loadEnvFile();
 
-const server = createServer()
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-  },
-});
+const port = process.env.PORT ?? 8000;
 
-io.on("connection", (socket) => {
-  socket.on("ping", (e) => {
-    console.log(e);
+const server = createServer();
 
-    io.emit("ping", "socket is working");
-  });
-});
+new WebSocketServer(server);
 
-server.listen(port, () => console.log(`server is running on port: ${port}`))
+server.listen(port, () => console.log(`server is running on port: ${port}`));

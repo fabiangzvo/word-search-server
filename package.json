@@ -12,7 +12,8 @@
   "license": "ISC",
   "packageManager": "pnpm@10.6.2",
   "dependencies": {
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@types/socket.io": "^3.0.2",

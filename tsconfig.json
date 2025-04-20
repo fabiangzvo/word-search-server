@@ -5,6 +5,11 @@
     "outDir": "dist",
     "rootDir": "server",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": "./server",
+    "paths": {
+      "@/*": ["./*"]
+    },
   }
+  
 }

@@ -1,7 +1,7 @@
 import { createServer } from "node:http";
 import { loadEnvFile } from "node:process";
 
-import { Logger } from "./lib/logger";
+import { Logger } from "@lib/logger";
 import { WebSocketServer } from "./sockets";
 
 process.env.NODE_ENV !== "production" && loadEnvFile();

@@ -2,13 +2,17 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "CommonJS",
-    "outDir": "dist",
-    "rootDir": "server",
+    "outDir": "./dist",
+    "rootDir": "./server",
     "strict": true,
     "esModuleInterop": true,
-    "baseUrl": "./server",
+    "baseUrl": "./",
+    "moduleResolution": "node",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./server/*"],
+      "@sockets/*": ["./server/sockets/*"],
+      "@lib/*": ["./server/lib/*"],
+      "@modules/*": ["./server/modules/*"],
     },
   }
   

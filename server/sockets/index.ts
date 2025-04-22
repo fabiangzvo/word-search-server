@@ -2,7 +2,7 @@ import { Server as httpServer } from "node:http";
 import { Server, Socket } from "socket.io";
 import { Logger as WinstonLogger } from "winston";
 
-import { Logger } from "../utils/logger";
+import { Logger } from "../lib/logger";
 import { Room } from "./events/room"; 
 
 export class WebSocketServer {

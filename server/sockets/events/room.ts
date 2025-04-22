@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { Logger as WinstonLogger } from "winston";
 
-import { Logger } from "../../utils/logger";
+import { Logger } from "../../lib/logger";
 
 export class Room {
   private logger: WinstonLogger = Logger.getInstance();

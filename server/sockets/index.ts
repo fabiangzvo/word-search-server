@@ -4,7 +4,7 @@ import { Logger as WinstonLogger } from "winston";
 
 import { Logger } from "@lib/logger";
 
-import { Room } from "./events/room"; 
+import { GameController } from "./events/game/controller"; 
 
 export class WebSocketServer {
   private io: Server;
@@ -20,7 +20,7 @@ export class WebSocketServer {
     });
 
     this.io.on("connection", (socket: Socket) => {
-      new Room(socket, this.io);
+      new GameController(socket);
 
       this.attachAdditionalListeners(socket)
     });

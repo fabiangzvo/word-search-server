@@ -1,5 +1,7 @@
 import { connect, Mongoose } from 'mongoose';
 import { Logger as WinstonLogger } from "winston";
+import path from 'node:path';
+import { glob } from 'glob';
 
 import { Logger } from "./logger";
 
@@ -20,6 +22,8 @@ export class MongooseClient {
         }
 
         MongooseClient.instance = await connect(process.env.MONGO_URI);
+
+        await this.loadModels();
       }
       catch (error) {
         this.logger.error('Error connecting to MongoDB:' + JSON.stringify(error), this.metadata);
@@ -29,5 +33,13 @@ export class MongooseClient {
     this.logger.info('MongoDB connection established', this.metadata);
 
     return MongooseClient.instance;
+  }
+
+  private static async loadModels(): Promise<void> {
+    const modelsPath = path.resolve(__dirname, '../sockets/events');
+
+    const files = await glob(`${modelsPath}/**/model.{ts,js}`);
+    
+    await Promise.all(files.map(async (file) => await import(file)));
   }
 }

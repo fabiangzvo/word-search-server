@@ -1,4 +1,4 @@
-import { Socket } from "socket.io";
+import { Socket, Server } from "socket.io";
 import { Logger as WinstonLogger } from "winston";
 
 import { Logger } from "@lib/logger";
@@ -9,36 +9,39 @@ export class GameController {
   private logger: WinstonLogger = Logger.getInstance();
   private gameService: GameService;
   private socket: Socket;
+  private server: Server;
+  private meta = { section: this.constructor.name };
 
-  constructor(socket: Socket) {
-    this.logger.info("Initializing GameController", { section: this.constructor.name });
+  constructor(socket: Socket, server: Server) {
+    this.logger.info("Initializing GameController", this.meta);
 
     this.socket = socket;
+    this.server = server;
     this.gameService = new GameService()
 
     socket.on("add-player", this.addPlayer.bind(this));
 
-    this.logger.info("GameController initialized", { section: this.constructor.name });
+    this.logger.info("GameController initialized", this.meta);
   }
 
   public async addPlayer(data: string): Promise<void> {
     try {
-      this.logger.info(`Adding player starting`, { section: "gameController" });
-      const { gameId, user } = JSON.parse(data);
+      this.logger.info(`Adding player starting`, this.meta);
+      const { gameId, user } = JSON.parse(data) as { gameId: string, user: string };
 
       const game = await this.gameService.addPlayer(gameId, user);
       if (!game) {
-        this.logger.info(`User ${user} was not joined to game: ${gameId}`, { section: "room" });
+        this.logger.info(`User ${user} was not joined to game: ${gameId}`, this.meta);
 
         return
       }
 
       this.socket.join(gameId);
-      this.socket.to(gameId).emit("user-joined", user);
+      this.server.in(gameId).emit("user-joined", game.users.find((u) => u._id === user));
 
-      this.logger.info(`User ${user} joined room ${gameId}`, { section: "room" });
+      this.logger.info(`User ${user} joined room ${gameId}`, this.meta);
     } catch (e) {
-      this.logger.error(`Error adding player with data: ${data}, error: ${e}`, { section: "gameController" });
+      this.logger.error(`Error adding player with data: ${data}, error: ${e}`, this.meta);
     }
   }
 }

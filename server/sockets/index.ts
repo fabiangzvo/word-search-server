@@ -20,7 +20,7 @@ export class WebSocketServer {
     });
 
     this.io.on("connection", (socket: Socket) => {
-      new GameController(socket);
+      new GameController(socket, this.io);
 
       this.attachAdditionalListeners(socket)
     });

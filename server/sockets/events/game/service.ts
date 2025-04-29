@@ -9,7 +9,7 @@ export class GameService {
       gameId,
       { $addToSet: { users: userId } },
       { new: true }
-    ).populate("users");
+    ).populate('users', '-password');
 
     if (!game) {
       throw new Error("Game not found");

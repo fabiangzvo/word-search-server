@@ -4,7 +4,7 @@ import { Logger as WinstonLogger } from "winston";
 
 import { Logger } from "@lib/logger";
 
-import { GameController } from "./events/game/controller"; 
+import { GameController } from "./events/game/controller";
 
 export class WebSocketServer {
   private io: Server;
@@ -29,6 +29,10 @@ export class WebSocketServer {
   }
 
   private attachAdditionalListeners(socket: Socket): void {
+    socket.on("disconnect", (socketId) => {
+      this.logger.info(`user ${socketId} disconnected`, { section: this.constructor.name })
+    });
+
     socket.on("ping", () => {
       this.io.emit("ping", "socket is working");
     });

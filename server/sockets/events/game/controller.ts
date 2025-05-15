@@ -21,6 +21,7 @@ export class GameController {
 
     socket.on("add-player", this.addPlayer.bind(this));
     socket.on("disconnect-player", this.removePlayer.bind(this));
+    socket.on("found-word", this.addResponse.bind(this));
 
     this.logger.info("GameController initialized", this.meta);
   }
@@ -83,6 +84,37 @@ export class GameController {
       );
 
       this.logger.info(`User ${user} joined room ${gameId}`, this.meta);
+    } catch (e) {
+      this.logger.error(
+        `Error adding player with data: ${data}, error: ${e}`,
+        this.meta
+      );
+    }
+  }
+
+  public async addResponse(data: string): Promise<void> {
+    try {
+      this.logger.info(`add response to the game is starting`, this.meta);
+      const responseInfo = JSON.parse(data) as {
+        gameId: string;
+        user: string;
+        question: string;
+        coords: Array<[Number, Number]>;
+      };
+
+      const game = await this.gameService.addResponse(responseInfo);
+      if (!game) {
+        this.logger.info(
+          `Question ${responseInfo.question} was not added as found to game: ${responseInfo.gameId}`,
+          this.meta
+        );
+
+        return;
+      }
+
+      this.server.in(responseInfo.gameId).emit("found-word", responseInfo);
+
+      this.logger.info(`add response to the game is finished`, this.meta);
     } catch (e) {
       this.logger.error(
         `Error adding player with data: ${data}, error: ${e}`,

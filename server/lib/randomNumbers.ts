@@ -15,7 +15,7 @@ export class RandomNumbers {
     if (selectedNumbers.length <= 0) return 0;
 
     const excludedNumbers = new Set(selectedNumbers);
-    const availableNumbers = Array.from({ length: limit || 45 }).filter(
+    const availableNumbers = Array.from({ length: limit || 39 }).filter(
       (_, index) => !excludedNumbers.has(index)
     );
 

@@ -13,6 +13,7 @@
       "@sockets/*": ["./server/sockets/*"],
       "@lib/*": ["./server/lib/*"],
       "@modules/*": ["./server/modules/*"],
+      "@constants/*": ["./server/constants/*"]
     },
   }
   

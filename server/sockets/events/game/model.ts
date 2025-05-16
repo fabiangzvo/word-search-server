@@ -1,34 +1,36 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema } from "mongoose";
 
-import { IGame } from './interface'
+import { IGame } from "./interface";
 
 const gameSchema = new Schema<IGame>(
   {
-    puzzle: { type: Schema.Types.ObjectId, ref: 'puzzles', required: true },
-    users: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'users',
-        required: true,
-      },
-    ],
+    puzzle: { type: Schema.Types.ObjectId, ref: "puzzles", required: true },
+    users: {
+      type: [
+        {
+          user: { type: Schema.Types.ObjectId, ref: "users", required: true },
+          color: { type: Number, required: true },
+        },
+      ],
+      required: true,
+    },
     startedAt: { type: Date, required: false },
     finishedAt: { type: Date, required: false },
     responses: {
       type: [
         {
-          question:{type: Schema.Types.ObjectId, required: true},
-          user: { type: Schema.Types.ObjectId, ref: 'users', required: true },
+          question: { type: Schema.Types.ObjectId, required: true },
+          user: { type: Schema.Types.ObjectId, ref: "users", required: true },
           coords: Array<[Number, Number]>,
         },
       ],
       required: true,
     },
-    winner: { type: Schema.Types.ObjectId, ref: 'users', required: false },
+    winner: { type: Schema.Types.ObjectId, ref: "users", required: false },
   },
   {
     timestamps: true,
   }
-)
+);
 
-export default model<IGame>('games', gameSchema)
+export default model<IGame>("games", gameSchema);

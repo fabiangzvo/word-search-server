@@ -1,15 +1,37 @@
+import { RandomNumbers } from "@lib/randomNumbers";
+
 import { IGameClient } from "./interface";
 import GameModel from "./model";
 
 export class GameService {
+  private randomNumbers: RandomNumbers = RandomNumbers.getInstance();
+
   constructor() {}
 
-  public async addPlayer(gameId: string, userId: string): Promise<IGameClient> {
+  public async addPlayer(gameId: string, user: string): Promise<IGameClient> {
+    const data = await GameModel.findById(gameId, { users: true }).exec();
+
+    const color = this.randomNumbers.getRandomNumber(
+      data?.users.map(({ color }) => color) || []
+    );
+
+    if (
+      data?.users.some(({ user: userActive }) => userActive.toString() === user)
+    )
+      throw new Error("User already joined");
+
     const game = await GameModel.findByIdAndUpdate(
       gameId,
-      { $addToSet: { users: userId } },
+      {
+        $addToSet: {
+          users: {
+            user,
+            color,
+          },
+        },
+      },
       { new: true }
-    ).populate("users", "-password");
+    ).populate("users.user", "-password");
 
     if (!game) throw new Error("Game not found");
 
@@ -21,8 +43,8 @@ export class GameService {
     userId: string
   ): Promise<IGameClient> {
     const game = await GameModel.findByIdAndUpdate(gameId, {
-      $pull: { users: userId },
-    }).populate("users", "-password");
+      $pull: { users: { user: userId } },
+    }).populate("users.user", "-password");
 
     if (!game) throw new Error("Game not found");
 
@@ -40,7 +62,7 @@ export class GameService {
       { _id: gameId },
       { $addToSet: { responses: body } },
       { new: true }
-    ).populate("users", "-password");
+    ).populate("users.user", "-password");
 
     if (!game) throw new Error("Game not found");
 

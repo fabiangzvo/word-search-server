@@ -47,7 +47,7 @@ export class GameController {
       this.socket.leave(gameId);
       this.server.in(gameId).emit(
         "user-left",
-        game.users.find((u) => u._id === user)
+        game.users.find(({ user: userData }) => userData._id.toString() === user)
       );
 
       this.logger.info(`User ${user} left room ${gameId}`, this.meta);
@@ -80,7 +80,7 @@ export class GameController {
       this.socket.join(gameId);
       this.server.in(gameId).emit(
         "user-joined",
-        game.users.find((u) => u._id === user)
+        game.users.find(({ user: userData }) => userData._id === user)
       );
 
       this.logger.info(`User ${user} joined room ${gameId}`, this.meta);

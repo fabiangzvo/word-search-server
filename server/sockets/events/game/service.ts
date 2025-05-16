@@ -68,4 +68,16 @@ export class GameService {
 
     return game.toJSON<IGameClient>({ flattenObjectIds: true });
   }
+
+  public async startGame(gameId: string): Promise<IGameClient> {
+    const game = await GameModel.findByIdAndUpdate(
+      gameId,
+      { startedAt: new Date() },
+      { new: true }
+    )
+
+    if (!game) throw new Error("Game not found");
+
+    return game.toJSON<IGameClient>({ flattenObjectIds: true });
+  }
 }

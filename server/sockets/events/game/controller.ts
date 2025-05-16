@@ -22,6 +22,7 @@ export class GameController {
     socket.on("add-player", this.addPlayer.bind(this));
     socket.on("disconnect-player", this.removePlayer.bind(this));
     socket.on("found-word", this.addResponse.bind(this));
+    socket.on("start-game", this.startGame.bind(this))
 
     this.logger.info("GameController initialized", this.meta);
   }
@@ -47,7 +48,9 @@ export class GameController {
       this.socket.leave(gameId);
       this.server.in(gameId).emit(
         "user-left",
-        game.users.find(({ user: userData }) => userData._id.toString() === user)
+        game.users.find(
+          ({ user: userData }) => userData._id.toString() === user
+        )
       );
 
       this.logger.info(`User ${user} left room ${gameId}`, this.meta);
@@ -121,5 +124,19 @@ export class GameController {
         this.meta
       );
     }
+  }
+
+  public async startGame(data: string): Promise<void> {
+    try {
+      this.logger.info(`starting game`, this.meta);
+      const { gameId } = JSON.parse(data) as { gameId: string };
+
+      const game = await this.gameService.startGame(gameId);
+
+      this.server.in(gameId).emit("start-game", game.startedAt);
+    } catch (e) {
+      console.log(e);
+    }
+    this.logger.info(`started game`, this.meta);
   }
 }

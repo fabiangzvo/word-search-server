@@ -1,6 +1,6 @@
 import { RandomNumbers } from "@lib/randomNumbers";
 
-import { IGameClient } from "./interface";
+import { IGameClient, IGamePuzzle } from "./interface";
 import GameModel from "./model";
 
 export class GameService {
@@ -56,17 +56,19 @@ export class GameService {
     user: string;
     question: string;
     coords: Array<[Number, Number]>;
-  }): Promise<IGameClient> {
+  }): Promise<IGamePuzzle> {
     const { gameId, ...body } = data;
     const game = await GameModel.findOneAndUpdate(
       { _id: gameId },
       { $addToSet: { responses: body } },
       { new: true }
-    ).populate("users.user", "-password");
+    )
+      .populate("users.user", "-password")
+      .populate("puzzle");
 
     if (!game) throw new Error("Game not found");
 
-    return game.toJSON<IGameClient>({ flattenObjectIds: true });
+    return game.toJSON<IGamePuzzle>({ flattenObjectIds: true });
   }
 
   public async startGame(gameId: string): Promise<IGameClient> {
@@ -74,7 +76,19 @@ export class GameService {
       gameId,
       { startedAt: new Date() },
       { new: true }
-    )
+    );
+
+    if (!game) throw new Error("Game not found");
+
+    return game.toJSON<IGameClient>({ flattenObjectIds: true });
+  }
+
+  public async finishGame(gameId: string): Promise<IGameClient> {
+    const game = await GameModel.findByIdAndUpdate(
+      gameId,
+      { finishedAt: new Date() },
+      { new: true }
+    );
 
     if (!game) throw new Error("Game not found");
 

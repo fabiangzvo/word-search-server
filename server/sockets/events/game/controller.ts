@@ -22,7 +22,7 @@ export class GameController {
     socket.on("add-player", this.addPlayer.bind(this));
     socket.on("disconnect-player", this.removePlayer.bind(this));
     socket.on("found-word", this.addResponse.bind(this));
-    socket.on("start-game", this.startGame.bind(this))
+    socket.on("start-game", this.startGame.bind(this));
 
     this.logger.info("GameController initialized", this.meta);
   }
@@ -116,6 +116,14 @@ export class GameController {
       }
 
       this.server.in(responseInfo.gameId).emit("found-word", responseInfo);
+
+      if (game.puzzle.questions.length === game.responses.length) {
+        await this.gameService.finishGame(responseInfo.gameId);
+        this.logger.info(`game over: ${responseInfo.gameId}`, this.meta);
+
+        this.server.in(responseInfo.gameId).emit("game-over");
+        this.socket.leave(responseInfo.gameId);
+      }
 
       this.logger.info(`add response to the game is finished`, this.meta);
     } catch (e) {

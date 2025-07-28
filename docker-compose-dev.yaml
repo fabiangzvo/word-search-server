@@ -1,0 +1,16 @@
+name: word-search-server
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-dev
+    env_file: .env
+    ports:
+      - "8000:8000"
+    develop:
+      watch:
+        - path: ./
+          action: rebuild
+          target: /server
+

@@ -46,6 +46,8 @@ export class GameService {
 
     if (data?.finishedAt) throw new Error("The game has already ended");
 
+    if (data?.startedAt) throw new Error("The game has already started");
+
     const game = await GameModel.findByIdAndUpdate(gameId, {
       $pull: { users: { user: userId } },
     }).populate("users.user", "-password");
